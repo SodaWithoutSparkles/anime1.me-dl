@@ -4,23 +4,25 @@ Extract URL and/or Download anime from anime1.me
 ## Install
 Go to the [release page](https://github.com/SodaWithoutSparkles/anime1.me-dl/release/latest) and download the source code. Unpack it and start using!
 
+If you are using android with termux installed, you may want to use [this guide](https://github.com/SodaWithoutSparkles/anime1.me-dl/blob/main/termux.md) instead.
+
 ## Supported sites
 This downloader (or more appropriately an extractor) supports the following sites.
 
-Tested and verified:
-- `https://anime1.me/<numbers>`, e.g.: `https://anime1.me/18305`
+- Tested and verified:
+    - `https://anime1.me/<numbers>`, e.g.: `https://anime1.me/18305`
 
-Should work, but no promise:
-- `https://anime1.me/category` (only first video)
+- Should work, but no promise:
+    - `https://anime1.me/category` (only first video)
 
-Does not support:
-- Any other site. This will cause unpredictable and undocumented behaviours.
+- Does not support:
+    - Any other site. This will cause unpredictable and undocumented behaviours.
 
 ## Requirements 
 - `beautifulsoup4` `4.11.1` or higher
 - `requests` `2.25.1` or higher
 - `lxml` `4.6.3` or higher
-- `yt_dlp` `2022.8.19` or higher (Optional, only needed when downloading)
+- `yt_dlp` `2022.8.19` or higher (Optional, default, only needed when downloading)
 
 
 ## Usage
