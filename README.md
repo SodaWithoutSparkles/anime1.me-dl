@@ -19,8 +19,8 @@ Does not support:
 ## Requirements 
 - `beautifulsoup4` `4.11.1` or higher
 - `requests` `2.25.1` or higher
-- `lxml``>=`4.6.3` or higher
-- `yt_dlp`>=`2022.8.19` or higher (Optional, only needed when downloading)
+- `lxml` `4.6.3` or higher
+- `yt_dlp` `2022.8.19` or higher (Optional, only needed when downloading)
 
 
 ## Usage
