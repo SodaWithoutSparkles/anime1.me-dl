@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "-v",
+                "-x",
+                "https://anime1.me/category/2023%e5%b9%b4%e7%a7%8b%e5%ad%a3/%e8%91%ac%e9%80%81%e7%9a%84%e8%8a%99%e8%8e%89%e8%93%ae"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

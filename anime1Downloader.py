@@ -2,6 +2,7 @@
 
 import argparse
 import requests
+# import urllib
 import json
 from bs4 import BeautifulSoup
 
@@ -14,22 +15,40 @@ args = parser.parse_args()
 url = args.url
 if args.verbose:
     print("[debug]", args.verbose)
-print(" [info] downloading from", url)
+print(" [info] extracting from", url)
+
+def mergeLists(list1, list2):
+    return list(map(lambda x, y:(x,y), list1, list2))
 
 def extractAPIpath(url):
     videoClass = 'video-js'
     titleClass = 'entry-title'
     resp = requests.get(url)
     soup = BeautifulSoup(resp.text, 'lxml')
-    title = soup.find(attrs={"class": titleClass}).get_text()
-    video = soup.find(attrs={"class": videoClass})['data-apireq']
-    if (video == None):
+    listOfTitles = soup.find_all(attrs={"class": titleClass})
+    listOfVideos = soup.find_all(attrs={"class": videoClass})
+    titles = []
+    videos = []
+    for title in listOfTitles:
+        titles.append(title.get_text())
+    for video in listOfVideos:
+        videos.append(video['data-apireq'])
+
+    if (len(videos) == 0 or videos[1] == None):
         print("[ERROR] fatal: unable to find data-apireq, abort")
         exit(1)
-    print(" [info] title: ", title)
-    if args.verbose:
-        print("[debug] data-apireq: ", video)
-    return video, title
+    if (len(titles) == 0 or titles[1] == None):
+        print("[ERROR] fatal: unable to find title, abort")
+        exit(1)
+    if (len(titles) != len(videos)):
+        print("[ERROR] fatal: mismatch between number of videos and title")
+        exit(1)
+    merged = mergeLists(titles, videos)
+    for item in merged:
+        print(f" [info] title: {item[0]}")
+        if args.verbose:
+            print(f"[debug]   - data-apireq: {item[1]}")
+    return merged
 
 
 def getSource(video):
@@ -41,9 +60,9 @@ def getSource(video):
         headers={'Content-Type': 'application/x-www-form-urlencoded'})
     result = json.loads(response.content.decode("utf-8"))
     if args.verbose:
-        print("[debug] raw api response: ", response.content.decode("utf-8"))
-        print("[debug] cookie: ", session.cookies.get_dict())
-        print("[debug] source: https:" + str(result['s'][0]['src']))
+        print(f"[debug] source: https:{str(result['s'][0]['src'])}")
+        print(f"[debug] cookie: {session.cookies.get_dict()}")
+        print(f"[debug] raw api response: {response.content.decode('utf-8')}")
     src = result['s'][0]['src']
     return src, session.cookies.get_dict()
 
@@ -71,12 +90,23 @@ def downloadVideo(src, cookie, title):
 
 
 def main(url):
-    video, title = extractAPIpath(url)
-    src, cookie = getSource(video)
-    if not(args.extract):
-        downloadVideo(src, cookie, title)
-    else:
-        print(f'[INFO] URL: {src}\n[INFO] cookie: {cookie}')
+    videos = extractAPIpath(url)
+    
+    sources = []
+
+    for video in videos:
+        src, cookie = getSource(video[1])
+        sources.append(src)
+    print('_'*50)
+    for i in range(len(sources)): 
+        if not(args.extract):
+            downloadVideo(src, cookie, video[0])
+        else:
+            print(f' [info] title: {videos[i][0]}')
+            print(f' [info]   - https:{sources[i]}')
+            
+    if (args.extract):
+        print(f' [info] cookie: {cookie}')
 
 try:
     main(url)
@@ -85,4 +115,4 @@ except Exception as e:
     print("----    Error    ----")
     print(e)
 finally:
-    print(" [info] cleaning up...")
+    print(" [info] done")

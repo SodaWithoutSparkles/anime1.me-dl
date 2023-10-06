@@ -11,9 +11,7 @@ This downloader (or more appropriately an extractor) supports the following site
 
 - Tested and verified:
     - `https://anime1.me/<numbers>`, e.g.: `https://anime1.me/18305`
-
-- Should work, but no promise:
-    - `https://anime1.me/category` (only first video)
+    - `https://anime1.me/category` (will download all videos)
 
 - Does not support:
     - Any other site. This will cause unpredictable and undocumented behaviours.
