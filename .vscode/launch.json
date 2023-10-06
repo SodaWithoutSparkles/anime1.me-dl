@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Python: test with url",
             "type": "python",
             "request": "launch",
             "program": "${file}",
@@ -13,6 +13,7 @@
                 "-v",
                 "-x",
                 "https://anime1.me/category/2023%e5%b9%b4%e7%a7%8b%e5%ad%a3/%e8%91%ac%e9%80%81%e7%9a%84%e8%8a%99%e8%8e%89%e8%93%ae"
+                // "https://anime1.me/21136"
             ],
             "console": "integratedTerminal",
             "justMyCode": true

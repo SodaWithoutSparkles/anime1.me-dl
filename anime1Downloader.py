@@ -2,28 +2,53 @@
 
 import argparse
 import requests
-# import urllib
 import json
 from bs4 import BeautifulSoup
 
-parser = argparse.ArgumentParser("anime1Downloader.py", formatter_class=argparse.RawTextHelpFormatter, description='Download anime1.me videos using requsets and beautifulsoup static parser')
+parser = argparse.ArgumentParser("anime1Downloader.py", formatter_class=argparse.RawTextHelpFormatter,
+                                 description='Download anime1.me videos using requsets and beautifulsoup static parser')
 parser.add_argument(
-    "url", help="a anime1.me direct url, e.g. https://anime1.me/18305\nLinks starting with https://anime1.me/category may not work\nYou may need to quote the url")
-parser.add_argument('-v', '--verbose', action='store_true', help="print debug info")
-parser.add_argument('-x', '--extract', action='store_true', help="extract URL only, no download")
+    "url", help="a anime1.me direct url, e.g. https://anime1.me/18305\nYou may need to quote the url")
+parser.add_argument('-v', '--verbose', action='store_true',
+                    help="print debug info")
+parser.add_argument('-x', '--extract', action='store_true',
+                    help="extract URL only, no download")
+parser.add_argument('-cf', '--cloudflare',
+                    help="set cf_clearance cookie to bypass cloudflare detection\nThe cookie is valid for an hour\nYou may need to quote the cookie", metavar='COOKIE')
+parser.add_argument('-ua', '--user-agent',
+                    help="set user-agent to bypass detection")
 args = parser.parse_args()
 url = args.url
 if args.verbose:
     print("[debug]", args.verbose)
 print(" [info] extracting from", url)
 
+headers = {'User-Agent': args.user_agent}
+cookies = {'cf_clearance': args.cloudflare}
+
+
 def mergeLists(list1, list2):
-    return list(map(lambda x, y:(x,y), list1, list2))
+    return list(map(lambda x, y: (x, y), list1, list2))
+
 
 def extractAPIpath(url):
     videoClass = 'video-js'
     titleClass = 'entry-title'
-    resp = requests.get(url)
+    session = requests.Session()
+    if (args.user_agent != None and args.cloudflare != None):
+        resp = session.get(url, headers=headers, cookies=cookies)
+    elif (args.user_agent != None or args.cloudflare != None):
+        print("[ERROR] cloudflare detects both user-agent and cf_clearance")
+        print("[ERROR] using just a single one might not bypass the detection")
+        exit(1)
+    else:
+        print(
+            " [WARN] user-agent and cf_clearance missing, cloudflare might block the request")
+        resp = session.get(url)
+
+    if (resp.status_code) == 403:
+        print("[ERROR] fatal: blocked by cloudflare")
+        exit(1)
     soup = BeautifulSoup(resp.text, 'lxml')
     listOfTitles = soup.find_all(attrs={"class": titleClass})
     listOfVideos = soup.find_all(attrs={"class": videoClass})
@@ -34,10 +59,10 @@ def extractAPIpath(url):
     for video in listOfVideos:
         videos.append(video['data-apireq'])
 
-    if (len(videos) == 0 or videos[1] == None):
+    if (len(videos) == 0 or videos[0] == None):
         print("[ERROR] fatal: unable to find data-apireq, abort")
         exit(1)
-    if (len(titles) == 0 or titles[1] == None):
+    if (len(titles) == 0 or titles[0] == None):
         print("[ERROR] fatal: unable to find title, abort")
         exit(1)
     if (len(titles) != len(videos)):
@@ -91,22 +116,23 @@ def downloadVideo(src, cookie, title):
 
 def main(url):
     videos = extractAPIpath(url)
-    
+
     sources = []
 
     for video in videos:
         src, cookie = getSource(video[1])
         sources.append(src)
     print('_'*50)
-    for i in range(len(sources)): 
-        if not(args.extract):
-            downloadVideo(src, cookie, video[0])
+    for i in range(len(sources)):
+        if not (args.extract):
+            downloadVideo(src, cookie, videos[i][0])
         else:
             print(f' [info] title: {videos[i][0]}')
             print(f' [info]   - https:{sources[i]}')
-            
+
     if (args.extract):
         print(f' [info] cookie: {cookie}')
+
 
 try:
     main(url)

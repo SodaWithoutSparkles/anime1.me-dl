@@ -26,19 +26,24 @@ This downloader (or more appropriately an extractor) supports the following site
 ## Usage
 
 ```
-usage: anime1Downloader.py [-h] [-v] [-x] url
+usage: anime1Downloader.py [-h] [-v] [-x] [-c COOKIE] [-ua USER_AGENT] url
 
 Download anime1.me videos using requsets and beautifulsoup static parser
 
 positional arguments:
-  url            a anime1.me direct url, e.g. https://anime1.me/18305
-                 Links starting with https://anime1.me/category may not work
-                 You may need to quote the url
+  url                   a anime1.me direct url, e.g. https://anime1.me/18305
+                        You may need to quote the url
 
-optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  print debug info
-  -x, --extract  extract URL only, no download
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         print debug info
+  -x, --extract         extract URL only, no download
+  -c COOKIE, --cloudflare COOKIE
+                        set cf_clearance cookie to bypass cloudflare detection
+                        The cookie is valid for an hour
+                        You may need to quote the cookie
+  -ua USER_AGENT, --user-agent USER_AGENT
+                        set user-agent to bypass detection
 ```
 
 ## Tips
