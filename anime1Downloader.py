@@ -118,20 +118,21 @@ def main(url):
     videos = extractAPIpath(url)
 
     sources = []
+    cookies = []
 
     for video in videos:
         src, cookie = getSource(video[1])
         sources.append(src)
+        cookies.append(cookie)
+
     print('_'*50)
     for i in range(len(sources)):
         if not (args.extract):
-            downloadVideo(src, cookie, videos[i][0])
+            downloadVideo(sources[i], cookies[i], videos[i][0])
         else:
             print(f' [info] title: {videos[i][0]}')
             print(f' [info]   - https:{sources[i]}')
-
-    if (args.extract):
-        print(f' [info] cookie: {cookie}')
+            print(f' [info]   - cookie: {cookies[i]}')
 
 
 try:
